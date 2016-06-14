@@ -1,16 +1,17 @@
-***Backend _.Net_ Interview Coding Exercise***
+***Backend _.Net_ Interview Coding Exercise***  
 
-> Using the 4.5 .Net Solution provided, build a solution to solve the problem.  
+> Using the 4.5 .Net Solution provided, build a solution to solve the problem.    
 
-**Problem:**   
+**Problem:**      
 1. We need an API endpoint that has the ability to post a new Web site job and have the api process this job which can be retrieved later by id.  
 2. Currently they only job type needed is the web site scraping job.  
-3. Website scraping job is a simple job that does the following.  
+3. This endpoint will be hit very heavily, so it has been asked that we implement a job scheduler. 
+4. All new requests are logged and an ID is given back as a response.
+5. The request ID can be used to check the current status of the job running and return back the results of the job.  
+6. Website scraping job is a simple job that does the following.  
   * Makes a request to website and gathers its response.  
-    * If items to scrape were requested the next step should be to process the response and find the items.  
-    * Store the result of the job so it can be retrieved later by ID.  
-4. This endpoint will be hit very heavily, so it has been asked that we implement a job scheduler. All new requests are logged and an ID is given back as a response.
-The request ID can be used to check the current status of the job running and return back the results of the job.  
+  * If items to scrape were requested the next step should be to process the response and find the items.  
+  * Store the result of the job so it can be retrieved later by ID.
 
 **Solution:**  
 1. Interview.Green.Web.Scraper  
