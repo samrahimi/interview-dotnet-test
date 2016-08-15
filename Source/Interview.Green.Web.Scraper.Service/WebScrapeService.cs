@@ -4,49 +4,50 @@ using System.Net;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Interview.Green.Web.Scraper.Service
 {
     public class WebScrapeService 
     {
+        public const double httpRequestTimeout = 15000.0; //in milliseconds
         /// <summary>
-        /// Scrapes a webpage.
+        /// Scrapes a webpage asynchronously, adds the result to 
+        /// the WebScrapeJobRequest, and calls JobSchedulerService.OnJobCompleted  
+        /// when done. If there is an error, request.Result.rawHTML will be set to null
         /// Note that this method blocks and should not be called on the main thread 
-        /// It is intended to be used with a job queuing / scheduling service such as 
-        /// JobSchedulerService. Alternatively, we could make this method 
-        /// asynchronous (using WebClient.DownloadStringAsync) and simplify the 
-        /// JobSchedulerService.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="selector"></param>
-        /// <returns></returns>
-        public static WebScrapeJobResult ScrapeWebsite(string url, string selector)
+        public static async Task ScrapeWebsiteAsync(WebScrapeJobRequest request)
         {
-            WebClient wc = new WebClient();
-            WebScrapeJobResult result = new WebScrapeJobResult();
-            try
+            using (HttpClient client = new HttpClient())
             {
-                result.rawHTML = wc.DownloadString(url);
-                if (!string.IsNullOrEmpty(selector))
-                    result.queryResults = parseAndQuery(result.rawHTML, selector);
-            }
-            catch (WebException ex)
-            {
-                //TODO: attach detailed error info to the result
-                return null;
-            }
-            return result;
-        }
+                client.Timeout = TimeSpan.FromMilliseconds(httpRequestTimeout);
 
-        public static WebScrapeJobResult ScrapeWebsiteAsync(WebScrapeJobRequest request)
-        {
-            return null;
+                try
+                {
+                    Task<string> scrapeTask = client.GetStringAsync(request.Url);
+                    Debug.WriteLine("Begin Job ID " + request.Id+", Url:"+ request.Url);
+                    string html = await scrapeTask;
+                    Debug.WriteLine("Job ID " + request.Id + " completed successfully");
+                    request.Result = new WebScrapeJobResult { rawHTML = html };
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Job ID " + request.Id + " completed with error: " + ex.Message);
+                    request.Result = null;
+                }
+                finally
+                {
+                    JobSchedulerService.OnJobCompleted(request);
+                }
+            }
         }
 
 
         /// <summary>
-        /// TODO: Implement a JQuery-style parser / filter for scraped pages.
-        /// A selector of "p" would give the contents of all p tags on the page, and so on...
+        /// TODO: Implement parsing and filtering, JQuery style. 
         /// </summary>
         /// <param name="rawHTML"></param>
         /// <param name="selector"></param>

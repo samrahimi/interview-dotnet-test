@@ -40,7 +40,9 @@ namespace Interview.Green.Web.Scraper.Controllers
         // DELETE: api/job/5
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+
+            JobSchedulerService.DeleteJob(id);
+
         }
     }
 }
