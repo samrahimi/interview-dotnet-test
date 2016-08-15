@@ -43,7 +43,7 @@
     <Compile Include="IBasic.cs" />
     <Compile Include="IJobQueuedRequest.cs" />
     <Compile Include="IJobSchedulerService.cs" />
-    <Compile Include="IWebScrapService.cs" />
+    <Compile Include="IWebScrapeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

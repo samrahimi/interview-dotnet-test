@@ -3,7 +3,7 @@ using Interview.Green.Web.Scraper.Interfaces;
 
 namespace Interview.Green.Web.Scraper.Models
 {
-    public class WebScrapJobRequest : IJobQueuedRequest
+    public class WebScrapeJobRequest : IJobQueuedRequest
     {
 
         public int Id { get; set; }
@@ -12,14 +12,14 @@ namespace Interview.Green.Web.Scraper.Models
         public string Url { get; set; } 
         public string Selector { get; set; }
         public JobRequestStatus Status { get; set; }
-        public WebScrapJobResult Result { get; set; }
+        public WebScrapeJobResult Result { get; set; }
 
         /// <summary>
-        /// Creates a new web scraping job request
+        /// Creates a new web scrape job request
         /// </summary>
         /// <param name="url">The url to scrape</param>
         /// <param name="selector">Jquery-style selector for filtering the results. If null, the result will contain the scraped page as HTML</param>
-        public WebScrapJobRequest(string url, string selector)
+        public WebScrapeJobRequest(string url, string selector)
         {
             this.RequestedAt = DateTime.UtcNow;
             this.RequestId = new Guid();

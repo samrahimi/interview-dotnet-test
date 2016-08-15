@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Interview.Green.Web.Scraper.Service
 {
-    public class WebScrapService : IWebScrapService
+    public class WebScrapeService : IWebScrapeService
     {
         /// <summary>
         /// Scrapes a webpage.
@@ -19,10 +19,10 @@ namespace Interview.Green.Web.Scraper.Service
         /// <param name="url"></param>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static WebScrapJobResult ScrapeWebsite(string url, string selector)
+        public static WebScrapeJobResult ScrapeWebsite(string url, string selector)
         {
             WebClient wc = new WebClient();
-            WebScrapJobResult result = new WebScrapJobResult();
+            WebScrapeJobResult result = new WebScrapeJobResult();
             try
             {
                 result.rawHTML = wc.DownloadString(url);
@@ -31,9 +31,15 @@ namespace Interview.Green.Web.Scraper.Service
             }
             catch (WebException ex)
             {
+                //TODO: attach detailed error info to the result
                 return null;
             }
             return result;
+        }
+
+        internal static WebScrapeJobResult ScrapeWebsite(WebScrapeJobRequest request)
+        {
+            return ScrapeWebsite(request.Url, request.Selector);
         }
 
 
