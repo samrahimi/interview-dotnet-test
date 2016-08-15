@@ -3,10 +3,11 @@ using Interview.Green.Web.Scraper.Models;
 using System.Net;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Interview.Green.Web.Scraper.Service
 {
-    public class WebScrapeService : IWebScrapeService
+    public class WebScrapeService 
     {
         /// <summary>
         /// Scrapes a webpage.
@@ -37,9 +38,9 @@ namespace Interview.Green.Web.Scraper.Service
             return result;
         }
 
-        internal static WebScrapeJobResult ScrapeWebsite(WebScrapeJobRequest request)
+        public static WebScrapeJobResult ScrapeWebsiteAsync(WebScrapeJobRequest request)
         {
-            return ScrapeWebsite(request.Url, request.Selector);
+            return null;
         }
 
 
@@ -52,7 +53,7 @@ namespace Interview.Green.Web.Scraper.Service
         /// <returns></returns>
         private static List<string> parseAndQuery(string rawHTML, string selector)
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
     }
 }

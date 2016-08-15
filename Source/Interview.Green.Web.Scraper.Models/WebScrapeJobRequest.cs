@@ -13,6 +13,7 @@ namespace Interview.Green.Web.Scraper.Models
         public string Selector { get; set; }
         public JobRequestStatus Status { get; set; }
         public WebScrapeJobResult Result { get; set; }
+     
 
         /// <summary>
         /// Creates a new web scrape job request
@@ -29,5 +30,5 @@ namespace Interview.Green.Web.Scraper.Models
         }
     }
 
-    public enum JobRequestStatus {Pending, InProgress, Completed, Error}
+    public enum JobRequestStatus {Pending, Queued, InProgress, Completed, Error}
 }
