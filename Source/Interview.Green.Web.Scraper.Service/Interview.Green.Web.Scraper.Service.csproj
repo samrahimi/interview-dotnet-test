@@ -64,6 +64,10 @@
       <Project>{C37020FA-1901-499B-B4CE-5CF8CE665476}</Project>
       <Name>Interview.Green.Web.Scraper.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Interview.Green.Web.Scraper.Models\Interview.Green.Web.Scraper.Models.csproj">
+      <Project>{B62950EB-FD92-4D2C-BA72-CA9015C27DFB}</Project>
+      <Name>Interview.Green.Web.Scraper.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
