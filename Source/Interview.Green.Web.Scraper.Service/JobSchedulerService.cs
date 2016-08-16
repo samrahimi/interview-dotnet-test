@@ -66,10 +66,25 @@ namespace Interview.Green.Web.Scraper.Service
             {
                 jobCount++;
                 request.Status = JobRequestStatus.InProgress;
-                var t= WebScrapeService.ScrapeWebsiteAsync(request);
+
+                //Although WebScrapeService.ScrapeWebsiteAsync is asychronous on its own
+                //we wrap it in a thread to avoid "ApplicationContextUnloaded" exceptions
+                //when the calling method completes
+                System.Threading.Thread scrapeThread = new System.Threading.Thread
+                  (delegate ()
+                  {
+                      //We don't need to await the returned task - it calls back to OnJobCompleted when finished
+                      var t = WebScrapeService.ScrapeWebsiteAsync(request);
+                  });
+                scrapeThread.Start();
             }
+
+
             else
+            {
                 request.Status = JobRequestStatus.Queued;
+                System.Diagnostics.Debug.WriteLine(string.Format("No slots available, Job {0} has been queued.", request.Id));
+            }
 
             return request.Id;
         }
@@ -88,8 +103,16 @@ namespace Interview.Green.Web.Scraper.Service
                     OrderBy(y => y.Id)
                     .First();
 
+                System.Diagnostics.Debug.WriteLine(string.Format("Job {0} will be executed now.", nextJob.Id));
+
                 nextJob.Status = JobRequestStatus.InProgress;
-                var t= WebScrapeService.ScrapeWebsiteAsync(nextJob);
+
+                System.Threading.Thread scrapeThread = new System.Threading.Thread
+                  (delegate ()
+                  {
+                      var t = WebScrapeService.ScrapeWebsiteAsync(nextJob);
+                  });
+                scrapeThread.Start();
             }
             else
             {
