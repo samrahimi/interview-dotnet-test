@@ -23,7 +23,7 @@ namespace Interview.Green.Web.Scraper.Models
         public WebScrapeJobRequest(string url, string selector)
         {
             this.RequestedAt = DateTime.UtcNow;
-            this.RequestId = new Guid();
+            this.RequestId = System.Guid.NewGuid();
             this.Url = url;
             this.Selector = selector;
             this.Status = JobRequestStatus.Pending;

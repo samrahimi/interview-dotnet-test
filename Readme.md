@@ -1,34 +1,40 @@
-***Backend _.Net_ Interview Coding Exercise***  
+***Scalable Web Scraping Service***  
 
-> Using the 4.5 .Net Solution provided, build a solution to solve the problem.    
+> API for scraping web pages, and querying them to retrieve specific content. Supports concurrent scraping and job scheduling (queuing) to ensure high availability under load.
+ 
+**Building and Testing:**      
+1. Clone this repo, open the solution in Visual Studio 2015 and build. 
+2. Run the unit tests in Interview.Green.Web.Scraper.Test 
+3. Run the solution and test manually - the endpoint is http://localhost:10820/api/job if running in the VS debugger
 
-**Problem:**      
-1. We need an API endpoint that has the ability to post a new Web site job.
-2. The Api will process this job and return a id for lookup and status purpose.  
-3. Currently they only job type needed is the web site scraping job.  
-4. This endpoint will be hit very heavily, so it has been asked that we implement a job scheduler. 
-5. All new requests are logged and an ID is given back as a response.
-6. The request ID can be used to check the current status of the job running and return back the results of the job.  
-7. Website scraping job is a simple job that does the following.  
-  * Makes a request to website and gathers its response.  
-  * If items to scrape were requested the next step should be to process the response and find the items.  
-  * Store the result of the job so it can be retrieved later by ID.
+**Usage**
 
-**Solution:**  
-1. Interview.Green.Web.Scraper  
-  * JobControler  - `[api/job]` - Use this controller as you're endpoint during this exercise.    
+1. To request a scraping job, POST to /api/job/?url=[url to scrape]&selector=[CSS selector to query]
+2. To check the status and/or view the results of a specific job, GET /api/job/[id] using the id returned by the earlier POST
+   *If the status is pending, in progress, queued, or error, no results will be present
+   *If the job has completed, the response JSON will contain a Result object - Result.rawHtml contains the entire html page that was retrieved, Result.queryResults contains an array of strings
+   *If querying fails or a valid selector is not provided, Result.queryResults will be an empty array.
+3. To delete a job, call DELETE /api/job/[id] - jobs cannot be deleted if they are in progress.
+4. To get all jobs (with status and results of applicable), GET /api/job
 
-**Hints:**  
-1. Look at using Quartz for scheduling.  
-2. Be sure to write unit tests for different cases...  
-3. Async everything...  
-4. The solution has been "mocked up" but don't feel this is how it needs to be implemented.  
-5. Concurrency with multiple jobs running.  
+**Configuration**
 
-**Bonus:**  
-1. Solve this issue without using a database.  
-2. Don't use any third party web scraping frameworks.  
-3. Think how this API will be consumed and what you might suggest to improve this.  
-4. Documentation & Local repo.
+* To change the maximum number of concurrent jobs, edit the value of maxConcurrentJobs in JobSchedulerService.cs (default is 4)
+* The Http request timeout for scraping a page is set by default to 15000ms - to modify this, edit the value of httpRequestTimeout in WebScrapeService.cs
 
+**Known Issues and Possible Improvements**
 
+* In a production version, it would be useful to refactor the above config values into a config file (e.g. App.config) rather than hard-coding them. This would allow them to be modified without redeploying 
+* For expediency, the solution uses a 3rd party library for parsing HTML, CsQuery (https://github.com/jamietre/CsQuery) - in my testing, certain advanced queries did not work correctly. A more robust scraping library should be used, as CsQuery is no longer being actively maintained
+* It would be useful to add support for batch jobs - given the real world use of such libraries, it would be a common use case to scrape multiple web pages (with the same query) and aggregate the results into a single list. 
+* Along the same lines, "spidering" would be a useful feature: given a URL, follow all links matching a selector, then scrape the resulting pages...
+* PUT /api/job is not implemented; therefore jobs cannot be edited once submitted. This would be simple to implement if desired. 
+* JobSchedulerService and/or WebScrapeService should be made into actual services - this way they can run on their own servers, leaving the web server free to fulfill HTTP requests and not overloading it.
+* This solution is specific to web scraping. With a little refactoring and proper use of Interfaces, the job scheduler would be able to handle multiple types of jobs (without having to understand the details of its execution).
+
+**Architecture Summary**
+
+* A job request is POSTed to the API
+* The API controller passes the request to the JobSchedulerService 
+* The service either queues the job, or spawns a new thread to execute it asynchronously. The id of the job is returned immediately (so that the API is not blocked waiting for scrape jobs to complete)
+* When a job completes, the results are attached to the request and the status is updated. If there are requests in the queue, the oldest queued job is then executed. If there are no queued request, the thread is terminated, freeing up a slot for the next request that comes in.

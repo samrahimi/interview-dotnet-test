@@ -65,9 +65,9 @@ namespace Interview.Green.Web.Scraper.Service
                 try
                 {
                     CsQuery.CQ dom = CsQuery.CQ.CreateDocument(rawHTML);
-                    foreach (CsQuery.CQ el in dom[selector])
+                    foreach (var el in dom[selector])
                     {
-                        queryResults.Add(el.Text());
+                        queryResults.Add(el.Cq().Text().Trim());
                     }
                 }
                 catch (Exception ex)
