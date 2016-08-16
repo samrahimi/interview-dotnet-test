@@ -66,7 +66,7 @@ namespace Interview.Green.Web.Scraper.Service
             {
                 jobCount++;
                 request.Status = JobRequestStatus.InProgress;
-                WebScrapeService.ScrapeWebsiteAsync(request);
+                var t= WebScrapeService.ScrapeWebsiteAsync(request);
             }
             else
                 request.Status = JobRequestStatus.Queued;
@@ -89,7 +89,7 @@ namespace Interview.Green.Web.Scraper.Service
                     .First();
 
                 nextJob.Status = JobRequestStatus.InProgress;
-                WebScrapeService.ScrapeWebsiteAsync(nextJob);
+                var t= WebScrapeService.ScrapeWebsiteAsync(nextJob);
             }
             else
             {

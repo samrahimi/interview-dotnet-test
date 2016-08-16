@@ -27,6 +27,14 @@ namespace Interview.Green.Web.Scraper.Tests
         }
 
         [TestMethod]
+        public void VerifyAsyncCalling()
+        {
+            JobController jc = new JobController();
+            var newid = jc.Post("http://www.google.com", null);
+            Assert.AreNotEqual(newid, 0);
+        }
+
+    [TestMethod]
         public void VerifyConcurrentExecution()
         {
             JobController jc = new JobController();
