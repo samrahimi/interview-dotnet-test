@@ -11,9 +11,11 @@
 
 1. To request a scraping job, POST to /api/job/?url=[url to scrape]&selector=[CSS selector to query]
 2. To check the status and/or view the results of a specific job, GET /api/job/[id] using the id returned by the earlier POST
-   *If the status is pending, in progress, queued, or error, no results will be present
-   *If the job has completed, the response JSON will contain a Result object - Result.rawHtml contains the entire html page that was retrieved, Result.queryResults contains an array of strings
-   *If querying fails or a valid selector is not provided, Result.queryResults will be an empty array.
+
+* If the status is pending, in progress, queued, or error, no results will be present
+* If the job has completed, the response JSON will contain a Result object - Result.rawHtml contains the entire html page that was retrieved, Result.queryResults contains an array of strings
+* If querying fails or a valid selector is not provided, Result.queryResults will be an empty array.
+
 3. To delete a job, call DELETE /api/job/[id] - jobs cannot be deleted if they are in progress.
 4. To get all jobs (with status and results of applicable), GET /api/job
 
